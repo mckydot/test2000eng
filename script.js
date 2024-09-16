@@ -2172,7 +2172,6 @@ function shuffleArray(array) {
     }
     return shuffledArray;
 }
-
 function gradeQuiz() {
     const quizContainer = document.querySelector('.quiz-container');
     const selects = quizContainer.querySelectorAll('select');
@@ -2187,20 +2186,24 @@ function gradeQuiz() {
         if (selectedValue === correctAnswer) {
             correctCount++;
         } else {
-            incorrectAnswers.push({ questionKey, correctAnswer });
+            incorrectAnswers.push({ questionKey, correctAnswer, selectedValue });
         }
     });
 
     const totalQuestions = selects.length;
     const scorePercentage = (correctCount / totalQuestions) * 100;
-    document.getElementById('results').innerHTML = `
+    
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.style.display = 'block';  // 결과를 보이게 함
+    resultsDiv.innerHTML = `
         <div class="centered">You scored ${correctCount} out of ${totalQuestions} (${scorePercentage.toFixed(2)}%)</div>
-        <br><br>
-        <strong>Incorrect Answers:</strong>
+        ${incorrectAnswers.length > 0 ? '<strong>Incorrect Answers:</strong>' : ''}
+        ${incorrectAnswers.length > 0 ? `
         <table>
             <thead>
                 <tr>
                     <th>English Word</th>
+                    <th>Your Answer</th>
                     <th>Correct Meaning</th>
                 </tr>
             </thead>
@@ -2208,10 +2211,16 @@ function gradeQuiz() {
                 ${incorrectAnswers.map(answer => `
                     <tr>
                         <td>${answer.questionKey}</td>
+                        <td>${answer.selectedValue}</td>
                         <td class="toggle-meaning" onclick="toggleMeaning(this)">${answer.correctAnswer}</td>
                     </tr>
                 `).join('')}
             </tbody>
         </table>
+        ` : ''}
     `;
+}
+
+function toggleMeaning(element) {
+    element.style.color = element.style.color === 'transparent' ? '' : 'transparent';
 }
